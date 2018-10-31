@@ -1,0 +1,798 @@
+swagger: "2.0"
+
+info:
+  version: 0.1
+  title: OpenCMDB API
+  description: OpenCMDB API
+
+securityDefinitions:
+  Authentication-Token:
+    type: apiKey
+    name: Authentication-Token
+    in: header
+
+schemes:
+  - http
+
+host: opencmdb.devopsedu.com
+basePath: /api/v0.1
+
+tags:
+  - name: login
+    description: 登陆
+
+paths:
+  /login:
+    post:
+      tags:
+        - login
+      summary: 登陆
+      description: 登陆返回token信息
+
+      parameters:
+        - name: user
+          in: body
+          description: login
+          schema:
+            required:
+              - email
+              - password
+            properties:
+              email:
+                type: string
+                example: zero@163.com
+              password:
+                type: string
+                example: zero123!@#
+
+      responses:
+        200:
+          description: 用户详细信息
+          content:
+            aplication/json:
+              schema:
+                type: object
+                properties:
+                  email:
+                    type: string
+                    description: 用户邮箱
+                  authentication_token:
+                    type: string
+                    description: Token
+                  roles:
+                    type: array
+                    description: 用户角色
+                    $ref: '#/definitions/Role'
+  /layers/{layer_id}/aggregations:
+    post:
+      tags:
+        - aggregations
+      summary: 集合
+      description: 集合信息
+      security:
+        - Authentication-Token: []
+      parameters:
+        - name: layer_id
+          in: path
+          description: 层级ID
+          required: true
+          default: 5b13ef6080ac93f4bb3f892f
+          schema:
+            type: string
+        - in: body
+          name: aggregation
+          description: 集合增加
+          schema:
+            $ref: '#/definitions/Aggregation'
+      responses:
+        201:
+          description: 集合详细
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/Aggregation'
+        422:
+          description: 客户端信息错误
+          content:
+            application/json:
+              schema:
+                $ref: '#definitions/ClientErrorTips'
+    get:
+      tags:
+        - aggregations
+      summary: 集合列表
+      parameters:
+        - name: layer_id
+          in: path
+          description: 层级ID
+          required: true
+          default: 5b13ef6080ac93f4bb3f892f
+          schema:
+            type: string
+      security:
+        - Authentication-Token: []
+      responses:
+        200:
+          description: 获取集合列表
+          content:
+            application/json:
+              schema:
+                type: array
+                $ref: '#/definitions/Aggregation'
+
+  /aggregations/{aggregation_id}:
+    get:
+      tags:
+        - aggregation
+      summary: 集合详细
+      parameters:
+        - name: aggregation_id
+          in: path
+          description: 集合ID
+          required: true
+          schema:
+            type: string
+      security:
+        - Authentication-Token: []
+      responses:
+        200:
+          description: 获取集合详细
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/Aggregation'
+    put:
+      tags:
+        - aggregation
+      summary: 更新集合详细
+      security:
+        - Authentication-Token: []
+      parameters:
+        - name: aggregation
+          in: body
+          description: 更新集合信息
+          schema:
+            $ref: '#/definitions/Aggregation'
+        - name: aggregation_id
+          in: path
+          description: 集合ID
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 获取集合详细
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/Aggregation'
+    delete:
+      tags:
+        - aggregation
+      summary: 删除集合信息
+      security:
+        - Authentication-Token: []
+      parameters:
+        - name: aggregation_id
+          in: path
+          description: 集合ID
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 删除集合信息
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /layers/{layer_id}/aggregations/{aggregation_id}/moulds:
+    get:
+      tags:
+       - moulds
+      summary: 集合中定义的模型
+      security:
+        - Authentication-Token: []
+      parameters:
+        - name: aggregation_id
+          in: path
+          description: 集合ID
+          required: true
+          schema:
+            type: string
+        - name: layer_id
+          in: path
+          description: 层级ID
+          required: true
+          default: 5b13ef6080ac93f4bb3f892f
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: 当前页
+          schema:
+            type: int
+            example: 1
+        - name: per_page
+          in: query
+          description: 每页多少个
+          schema:
+            type: int
+            example: 20
+      responses:
+        200:
+          description: 获取模型列表
+          content:
+            application/json:
+              schema:
+                type: array
+                $ref: '#/definitions/Mould'
+    post:
+      tags:
+        - moulds
+      summary: 创建模型
+      security:
+        - Authentication-Token: []
+      parameters:
+        - name: layer_id
+          in: path
+          description: 层级ID
+          required: true
+          default: 5b13ef6080ac93f4bb3f892f
+          schema:
+            type: string
+        - in: body
+          name: mould
+          description: 定义模型
+          schema:
+            $ref: '#/definitions/Mould'
+        - name: aggregation_id
+          in: path
+          description: 集合ID
+          required: true
+          schema:
+            type: string
+      responses:
+        422:
+          description: 客户端信息错误
+          content:
+            application/json:
+              schema:
+                $ref: '#definitions/ClientErrorTips'
+        201:
+          description: 创建模型
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/Mould'
+  /moulds:
+    get:
+      tags:
+        - mould
+      summary: 获取所有的模型
+      security:
+        - Authentication-Token: []
+      responses:
+        200:
+          description: 获取模型列表
+          content:
+            application/json:
+              schema:
+                type: array
+                $ref: '#/definitions/Mould'
+  /moulds/{mould_id}:
+    get:
+      tags:
+        - mould
+      summary: 获取模型信息
+      security:
+        - Authentication-Token: []
+      parameters:
+        - name: mould_id
+          in: path
+          description: 模型ID
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 获取模型信息
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/Mould'
+    put:
+      tags:
+        - mould
+      summary: 更新模型信息
+      security:
+        - Authentication-Token: []
+      parameters:
+        - name: mould
+          in: body
+          description: 更新模型信息
+          schema:
+            $ref: '#/definitions/Mould'
+
+        - name: mould_id
+          in: path
+          description: 模型ID
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 获取模型信息
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/Mould'
+    delete:
+      tags:
+        - mould
+      summary: 删除模型信息
+      security:
+        - Authentication-Token: []
+      parameters:
+        - name: mould_id
+          in: path
+          description: 集合ID
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 删除模型信息
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /layers/{layer_id}/moulds/tree:
+    get:
+      tags:
+        - mould_relationship
+      parameters:
+        - name: layer_id
+          in: path
+          description: 层级ID
+          required: true
+          default: 5b13ef6080ac93f4bb3f892f
+          schema:
+            type: string
+      summary: 模型关系
+      security:
+        - Authentication-Token: []
+      responses:
+        200:
+          description: 获取模型信息
+          content:
+            application/json:
+              schema:
+                type: array
+                $ref: '#/definitions/Mould'
+
+  /moulds/{mould_id}/parent:
+    get:
+      tags:
+        - mould_relationship
+      summary: 模型关系
+      security:
+        - Authentication-Token: []
+      parameters:
+        - name: mould_id
+          in: path
+          description: 模型ID
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 获取模型信息
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/Mould'
+
+  /moulds/{mould_id}/children:
+    get:
+      tags:
+        - mould_relationship
+      summary: 模型关系
+      security:
+        - Authentication-Token: []
+      parameters:
+        - name: mould_id
+          in: path
+          description: 模型ID
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 获取模型信息
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/Mould'
+
+  /layers/{layer_id}/instances/tree:
+    get:
+      tags:
+        - instance_relationship
+      parameters:
+        - name: layer_id
+          in: path
+          description: 层级ID
+          required: true
+          default: 5b13ef6080ac93f4bb3f892f
+          schema:
+            type: string
+      summary: 实例关系
+      security:
+        - Authentication-Token: []
+      responses:
+        200:
+          description: 获取实例关系
+          content:
+            application/json:
+              schema:
+                type: array
+                $ref: '#/definitions/Instance'
+
+  /instances/{instance_id}/parent:
+    get:
+      tags:
+        - instance_relationship
+      summary: 实例关系
+      security:
+        - Authentication-Token: []
+      parameters:
+        - name: instance_id
+          in: path
+          description: 模型ID
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 获取实例父关系
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/Instance'
+
+  /instances/{instance_id}/children:
+    get:
+      tags:
+        - instance_relationship
+      summary: 实例关系
+      security:
+        - Authentication-Token: []
+      parameters:
+        - name: instance_id
+          in: path
+          description: 模型ID
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 获取实例子关系
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/Instance'
+
+  /moulds/{mould_id}/instances:
+    get:
+      tags:
+       - instances
+      summary: 实例
+      security:
+        - Authentication-Token: []
+      parameters:
+        - name: mould_id
+          in: path
+          description: 模型ID
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: 当前页
+          schema:
+            type: int
+            example: 1
+        - name: per_page
+          in: query
+          description: 每页多少个
+          schema:
+            type: int
+            example: 20
+      responses:
+        200:
+          description: 获取模型列表
+          content:
+            application/json:
+              schema:
+                type: array
+                $ref: '#/definitions/Instance'
+    post:
+      tags:
+        - instances
+      summary: 实例
+      security:
+        - Authentication-Token: []
+      parameters:
+        - in: body
+          name: ability
+          description: 对象的值
+          schema:
+            $ref: '#/definitions/Ability'
+        - name: mould_id
+          in: path
+          description: 模型ID
+          required: true
+          schema:
+            type: string
+      responses:
+        422:
+          description: 客户端信息错误
+          content:
+            application/json:
+              schema:
+                $ref: '#definitions/ClientErrorTips'
+        201:
+          description: 创建模型
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/Mould'
+
+  /instances/{instance_id}:
+    get:
+      tags:
+        - instance
+      summary: 获取实例信息
+      security:
+        - Authentication-Token: []
+      parameters:
+        - name: instance_id
+          in: path
+          description: 实例ID
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 获取实例信息
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/Mould'
+    put:
+      tags:
+        - instance
+      summary: 更新实例信息
+      security:
+        - Authentication-Token: []
+      parameters:
+        - name: abilities
+          in: body
+          description: 更新实例信息
+          schema:
+            $ref: '#/definitions/Ability'
+        - name: instance_id
+          in: path
+          description: 实例ID
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 更新实例信息
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/Mould'
+    delete:
+      tags:
+        - instance
+      summary: 删除实例信息
+      security:
+        - Authentication-Token: []
+      parameters:
+        - name: instance_id
+          in: path
+          description: 集合ID
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: 删除模型信息
+          content:
+            application/json:
+              schema:
+                type: object
+
+definitions:
+  ClientErrorTips:
+    type: object
+    properties:
+      message:
+        type: string
+      errcode:
+        type: integer
+
+  User:
+    type: object
+    properties:
+      email:
+        type: string
+      confirmed_at:
+        type: integer
+        format: int64
+  Role:
+    type: object
+    description: 角色信息
+    required:
+      - name
+      - description
+    properties:
+      name:
+        type: string
+        description: 角色名
+      description:
+        type: string
+        description: 角色描述
+  Aggregation:
+    type: object
+    description: 集合信息
+    required:
+      - code
+      - name
+    properties:
+      id:
+        type: string
+        description: 集合ID
+      code:
+        type: string
+        description: 集合code
+        pattern: "^[A-Za-z][A-Za-z0-9_]*$"
+      name:
+        type: string
+        description: 集合名称
+  Mould:
+    type: object
+    description: 模型信息
+    required:
+      - code
+      - name
+    properties:
+      id:
+        type: string
+        description: 模型ID
+      code:
+        type: string
+        description: 模型code
+        pattern: "^[A-Za-z][A-Za-z0-9_]*$"
+      name:
+        type: string
+        description: 模型名称
+      matrix:
+        type: array
+        items: '#/definitions/Matrix'
+      aggregation_id:
+        type: string
+        description: 模型组ID(只有在更新模型组时使用)
+      has_children:
+        type: boolean
+        description: 是否有子模型
+      children:
+        type: array
+        items: '#/definitions/Mould'
+
+  Instance:
+    type: object
+    description: 模型信息
+    required:
+      - code
+      - name
+    properties:
+      id:
+        type: string
+        description: 模型ID
+      code:
+        type: string
+        description: 模型code
+        pattern: "^[A-Za-z][A-Za-z0-9_]*$"
+      name:
+        type: string
+        description: 模型名称
+      matrix:
+        type: array
+        items: '#/definitions/Matrix'
+      has_children:
+        type: boolean
+        description: 是否有子模型
+      children:
+        type: array
+        items: '#/definitions/Mould'
+
+  Matrix:
+    type: object
+    description: 基本信息
+    required:
+      - code
+      - name
+    properties:
+      attributes:
+        type: array
+        items: '#/definitions/Attribute'
+      matrix_code:
+        type: string
+        description: code
+        pattern: "^[A-Za-z][A-Za-z0-9_]*$"
+      matrix_name:
+        type: string
+        description: 基本信息名称
+
+  Attribute:
+    type: object
+    description: 字段类型
+    properties:
+      attribute_code:
+        type: string
+        description: 字段code
+        pattern: "^[A-Za-z][A-Za-z0-9_]*$"
+      attribute_name:
+        type: string
+        description: 字段名称
+      type:
+        type: string
+        description: 字段类型
+      value:
+        type: string/list
+        description: 字段对应的值
+      max_length:
+        type: int
+        description: 最长
+      min_length:
+        type: int
+        description: 最短
+      default:
+        type: string/list
+        description: 默认值
+      front_type:
+        type: string
+        description: 前端类型
+      regexp:
+        type: string
+        description: 正则流程
+      max_value:
+        type: int
+        description: 最大值
+      min_value:
+        type: int
+        description: 最小值
+      precision:
+        type: int
+        description: foat精准度
+      options:
+        type: list
+        description: 选项信息
+      default_selected:
+        type: list
+        description: 默认选项
+
+
+  Ability:
+    type: object
+    description: 字段的值
+    properties:
+      abilities:
+        type: object
+        description: code对应的各种值
