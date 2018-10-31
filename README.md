@@ -2,6 +2,8 @@
   - 产品定位：全开源轻量级CMDB项目
   - 我们的口号：让中国所有的运维工程师不再使用Excel管理运维资产！
   - 官网网站： http://opencmdb.cn
+  - 前端代码：https://github.com/unixhot/opencmdb-frontend/
+  - 后端代码：https://github.com/unixhot/opencmdb-backend/
   - 项目成员：赵班长（PO）、母红英（Dev）、张亚庆（Dev）、张龙（Dev）
   
 
