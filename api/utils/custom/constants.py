@@ -20,7 +20,7 @@ LAYERS_CONFIG = {
     '5b13ef6080ac93f4bb3f892f': {
         'name': '资源层',
         'mould_info': {
-            'name': 'root',
+            'name': '资源模型',
             'has_children': False,
             'children': [],
         },
@@ -40,7 +40,7 @@ LAYERS_CONFIG = {
     '5b225e5c7c3b0567969d5f68': {
         'name': '应用层',
         'mould_info': {
-            'name': 'root',
+            'name': '应用模型',
             'has_children': False,
             'children': [],
         },
