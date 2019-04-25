@@ -8,8 +8,8 @@ from api.utils.custom.constants import LAYERS_CONFIG
 from api.utils.custom.interface_tips import InterfaceTips
 from api.utils.custom.resource import BaseResource
 from api.utils.custom.schema import (
-    instance_schema, instances_schema, base_query_schema, instance_node_schema, instance_nodes_schema,
-    instance_detail_schema, instances_detail_schema,
+    instance_schema, instances_schema, base_query_schema, instance_node_schema, instance_nodes_schema, mould_base_schema,
+    instance_detail_schema, instances_detail_schema, bridges_instances_query_schema, mould_instances_stats_schema,
 )
 
 
@@ -49,6 +49,48 @@ class InstancesResource(BaseResource):
 
         instance = Instance.create(mould=mould, **args)
         return instance_detail_schema.dump(instance).data, 201
+
+
+class BridgesInstancesResource(BaseResource):
+    @use_args(bridges_instances_query_schema)
+    @roles_accepted('admin')
+    def get(self, args):
+        '''
+        以应用维度查询资源信息
+        '''
+        mould_ids = args.pop('mould_ids', [])
+        q = args.pop('q', None)
+        if mould_ids:
+            args.update({'mould__in': mould_ids})
+        Instance.fetch_one()
+        instances, total = Instance.pagination(**args)
+        return BaseResource.pagination(instances_detail_schema.dump(instances).data, total, args.get('per_page'))
+
+
+class MouldInstanceStatsResource(BaseResource):
+    @use_args(mould_instances_stats_schema)
+    @roles_accepted('admin')
+    def get(self, args):
+        '''
+        以模型维统计资源信息
+        :param args:
+        :return:
+        '''
+        instances = Instance.fetch_all(**args)
+        instance_aggregation = instances.aggregate(*[{'$group': {'_id': '$mould', 'count': {'$sum': 1}}}])
+        moulds = Mould.fetch_all(**args)
+        moulds_data = {}
+        for mould in moulds:
+            moulds_data.update({
+                mould.id: mould_base_schema.dump(mould).data
+            })
+        mould_instances_stats = []
+        for stats in instance_aggregation:
+            stats.update({
+                'mould': moulds_data.get(stats.get('_id'), {})
+            })
+            mould_instances_stats.append(stats)
+        return mould_instances_stats
 
 
 class InstanceResource(BaseResource):

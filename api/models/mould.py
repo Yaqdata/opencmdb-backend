@@ -5,13 +5,17 @@ from api.utils.custom.constants import DEFAULT_MATRIX
 
 
 class Mould(BasicDocument):
+    '''
+    模型
+    '''
     code = db.StringField(max_length=255, auto_index=True, unique=True)
     name = db.StringField(max_length=255, unique=True)
-    aggregation = db.ReferenceField('Aggregation', require=True)
-    description = db.StringField(max_length=255, default='')
-    matrix = db.ListField(default=DEFAULT_MATRIX)
-    layer_id = db.StringField(max_length=255)
-    parent = db.ReferenceField('Mould', default=None)
+    aggregation = db.ReferenceField('Aggregation', require=True, help_text='集合ID')
+    description = db.StringField(max_length=255, default='', help_text='描述')
+    matrix = db.ListField(default=DEFAULT_MATRIX, help_text='模型结构信息')
+    layer_id = db.StringField(max_length=255, help_text='层级ID，目前分为资源层和应用层', auto_index=True)
+    parent = db.ReferenceField('Mould', default=None, help_text='父级模型')
+    bridges = db.ListField(db.ReferenceField('Mould'), help_text='链接模型')
 
     def _validate_ability(self, key, ability, d_type, required=False):
         if required and ability is None:

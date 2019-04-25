@@ -2,7 +2,7 @@ import copy
 
 from marshmallow import fields
 
-from api.utils.custom.schema.base import BaseSchema
+from api.utils.custom.schema.base import (BaseSchema, BaseQuerySchema)
 
 
 class AbilityFiled(fields.Dict):
@@ -34,6 +34,22 @@ class InstanceDetailSchema(InstanceSchema):
 class InstanceNodeSchema(InstanceSchema):
     has_children = fields.Bool(dump_only=True)
     children = fields.Nested('self', dump_only=True, many=True)
+
+    class Meta:
+        strict = True
+
+
+class BridgesInstancesQuerySchema(BaseQuerySchema):
+    bridge_id = fields.Str()
+    layer_id = fields.Str(default='5b13ef6080ac93f4bb3f892f')
+    mould_ids = fields.List(fields.Str(), required=False)
+
+    class Meta:
+        strict = True
+
+
+class MouldInstanceStatsSchema(BaseSchema):
+    layer_id = fields.Str(default='5b13ef6080ac93f4bb3f892f')
 
     class Meta:
         strict = True
