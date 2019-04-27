@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_cors import CORS
 from flask_security import MongoEngineUserDatastore
+from flask_log_request_id import RequestID
 
 from api.config import load_config
 from api.utils.custom.error import error
@@ -9,8 +10,10 @@ from api.models import User, Role
 from api.controller.app_v0_1.view import BLUEPRINTS
 from api.utils.common.extentions import (db, security)
 
+
 def extensions_load(app):
     db.init_app(app)
+    RequestID(app)
     user_data_store = MongoEngineUserDatastore(db, User, Role)
     s = security.init_app(app, user_data_store, register_blueprint=False)
     cors = CORS(app, resources={r"*": {"origins": "*", "expose_headers": "X-Total"}})

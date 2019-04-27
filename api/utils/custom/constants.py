@@ -16,6 +16,10 @@ class State(BasicEnum):
     CREATED = 1
 
 
+class OperationLogType(BasicEnum):
+    OPERATION_LOG = 1
+
+
 LAYERS_CONFIG = {
     '5b13ef6080ac93f4bb3f892f': {
         'name': '资源层',

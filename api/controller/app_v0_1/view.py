@@ -12,6 +12,7 @@ from api.service.instance import (
     InstancesResource, InstanceResource, InstanceTreeResource, InstanceParentResource,
     InstanceChildrenResource, BridgesInstancesResource, MouldInstanceStatsResource,
 )
+from api.service.operation_log import OperationLogsResource
 
 api_bp_v1 = Blueprint('bp_v0.1', __name__)
 api_v1 = Api(api_bp_v1, '/api/v0.1')
@@ -33,6 +34,7 @@ api_v1.add_resource(InstanceParentResource, '/instances/<instance_id>/parent')
 api_v1.add_resource(InstanceChildrenResource, '/instances/<instance_id>/children')
 api_v1.add_resource(BridgesInstancesResource, '/bridges/instances')
 api_v1.add_resource(MouldInstanceStatsResource, '/mould/instances/stats')
+api_v1.add_resource(OperationLogsResource, '/operation/logs')
 
 BLUEPRINTS = [api_bp_v1]
 

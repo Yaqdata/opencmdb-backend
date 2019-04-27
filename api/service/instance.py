@@ -42,6 +42,10 @@ class InstancesResource(BaseResource):
                 args.update({'parent': parent})
             else:
                 error(InterfaceTips.PARENT_ID_IS_REQUIRED)
+        bridge_ids = args.pop('bridge_ids', [])
+        if bridge_ids:
+            bridges = Instance.find_by_pks(bridge_ids)
+            args.update({'bridges': bridges})
 
         # TODO check record is existed
         # if Mould.existed_record(**args):
@@ -86,8 +90,10 @@ class MouldInstanceStatsResource(BaseResource):
             })
         mould_instances_stats = []
         for stats in instance_aggregation:
+            stats_id = stats.pop('_id')
             stats.update({
-                'mould': moulds_data.get(stats.get('_id'), {})
+                'mould': moulds_data.get(stats_id, {}),
+                'id': str(stats_id)
             })
             mould_instances_stats.append(stats)
         return mould_instances_stats

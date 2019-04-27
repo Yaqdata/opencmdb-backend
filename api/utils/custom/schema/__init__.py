@@ -5,6 +5,7 @@ from api.utils.custom.schema.base import BaseQuerySchema
 from api.utils.custom.schema.instance import (
     InstanceSchema, InstanceNodeSchema, InstanceDetailSchema, BridgesInstancesQuerySchema, MouldInstanceStatsSchema
 )
+from api.utils.custom.schema.operation_log import (OperationLogSchema, OperationLogsQuerySchema)
 
 
 user_schema = UserSchema()
@@ -26,6 +27,8 @@ instance_detail_schema = InstanceDetailSchema()
 instances_detail_schema = InstanceDetailSchema(many=True)
 bridges_instances_query_schema = BridgesInstancesQuerySchema()
 mould_instances_stats_schema = MouldInstanceStatsSchema()
+operation_logs_schema = OperationLogSchema(many=True)
+operation_logs_query_schema = OperationLogsQuerySchema()
 
 
 __all__ = [
@@ -33,4 +36,5 @@ __all__ = [
     'base_query_schema', 'mould_base_schema', 'moulds_base_schema', 'mould_node_schema', 'mould_nodes_schema',
     'instance_node_schema', 'instance_nodes_schema', 'instance_detail_schema', 'instances_detail_schema',
     'bridges_instances_query_schema', 'mould_instances_stats_schema', 'instance_schema', 'instances_schema',
+    'operation_logs_schema', 'operation_logs_query_schema',
 ]

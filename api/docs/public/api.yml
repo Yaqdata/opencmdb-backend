@@ -40,10 +40,10 @@ paths:
             properties:
               email:
                 type: string
-                example: zero@163.com
+                example: xx@xx.com
               password:
                 type: string
-                example: zero123!@#
+                example: xxxxxxxx
 
       responses:
         200:
@@ -550,6 +550,103 @@ paths:
             application/json:
               schema:
                 $ref: '#/definitions/Mould'
+
+  /bridges/instances:
+    get:
+      tags:
+        - bridges_initances
+      summary: 以应用维度查询资源信息
+      security:
+        - Authentication-Token: []
+      parameters:
+        - name: page
+          in: query
+          description: 当前页
+          schema:
+            type: int
+            example: 1
+        - name: per_page
+          in: query
+          description: 每页多少个
+          schema:
+            type: int
+            example: 20
+        - name: bridge_id
+          in: query
+          description: 链接ID
+          schema:
+            type: string
+        - name: layer_id
+          in: query
+          description: 层级ID
+          schema:
+            type: string
+            example: 5b13ef6080ac93f4bb3f892f
+      responses:
+        422:
+          description: 客户端信息错误
+          content:
+            application/json:
+              schema:
+                $ref: '#definitions/ClientErrorTips'
+        200:
+          description: 获取实例信息
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/Instance'
+
+  /mould/instances/stats:
+    get:
+      tags:
+        - stats
+      summary: 根据层级信息查询统计信息
+      security:
+        - Authentication-Token: []
+      parameters:
+        - name: layer_id
+          in: query
+          description: 层级ID
+          schema:
+            type: string
+            example: 5b13ef6080ac93f4bb3f892f
+      responses:
+        200:
+          description: 统计信息
+
+  /operation/logs:
+    get:
+      tags:
+        - operation
+      summary: 操作日志
+      security:
+        - Authentication-Token: []
+      parameters:
+        - name: action
+          in: query
+          description: 动作
+          schema:
+            type: string
+        - name: request_id
+          in: query
+          description: 请求ID
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: 当前页
+          schema:
+            type: int
+            example: 1
+        - name: per_page
+          in: query
+          description: 每页多少个
+          schema:
+            type: int
+            example: 20
+      responses:
+        200:
+          description: 统计信息
 
   /instances/{instance_id}:
     get:

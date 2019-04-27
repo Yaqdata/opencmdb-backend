@@ -41,7 +41,10 @@ class AggregationMouldsResource(BaseResource):
                 error(InterfaceTips.PARENT_DATA_NOT_EXISTED)
             else:
                 args.update({'parent': parent})
-
+        bridge_ids = args.pop('bridge_ids', [])
+        if bridge_ids:
+            bridges = Mould.find_by_pks(bridge_ids)
+            args.update({'bridges': bridges})
         args.update({'aggregation': aggregation, 'layer_id': layer_id})
         mould = Mould.create(**args)
         return mould_schema.dump(mould).data, 201
@@ -88,6 +91,11 @@ class MouldResource(BaseResource):
                 error(InterfaceTips.PARENT_DATA_NOT_EXISTED)
             else:
                 args.update({'parent': parent})
+
+        bridge_ids = args.pop('bridge_ids', [])
+        if bridge_ids:
+            bridges = Mould.find_by_pks(bridge_ids)
+            args.update({'bridges': bridges})
         mould = mould.update(**args)
         children = mould_schema.dump(mould).data
         return children

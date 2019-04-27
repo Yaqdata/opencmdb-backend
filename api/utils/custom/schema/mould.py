@@ -60,6 +60,8 @@ class MouldSchema(MouldBaseSchema):
     parent_id = fields.Str(load_only=True)
     parent = fields.Nested(MouldBaseSchema, dump_only=True)
     layer_id = fields.Str(load_only=True)
+    bridge_ids = fields.List(fields.Str(), required=False)
+    bridges = fields.List(fields.Nested(MouldBaseSchema), dump_only=True)
 
     class Meta:
         strict = True

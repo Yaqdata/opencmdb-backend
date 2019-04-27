@@ -11,8 +11,14 @@ class RoleSchema(BaseSchema):
         strict = True
 
 
-class UserSchema(BaseSchema):
+class UserBasicSchema(BaseSchema):
     email = fields.Email(required=True)
+
+    class Meta:
+        strict = True
+
+
+class UserSchema(UserBasicSchema):
     password = fields.String(load_only=True)
     confirmed_at = Timestamp(dump_only=True)
     roles = fields.List(fields.Nested(RoleSchema))

@@ -26,6 +26,8 @@ class InstanceSchema(BaseSchema):
 class InstanceDetailSchema(InstanceSchema):
     parent_id = fields.Str()
     parent = fields.Nested(InstanceSchema, dump_only=True)
+    bridge_ids = fields.List(fields.Str(), required=False)
+    bridges = fields.List(fields.Nested(InstanceSchema), dump_only=True)
 
     class Meta:
         strict = True
