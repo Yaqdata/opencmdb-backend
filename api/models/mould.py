@@ -16,6 +16,7 @@ class Mould(BasicDocument):
     layer_id = db.StringField(max_length=255, help_text='层级ID，目前分为资源层和应用层', auto_index=True)
     parent = db.ReferenceField('Mould', default=None, help_text='父级模型')
     bridges = db.ListField(db.ReferenceField('Mould'), help_text='链接模型')
+    mould_type = db.IntegerField(default=0, help_text='0:自定义类型,1:系统内置类型不可删除')
 
     def _validate_ability(self, key, ability, d_type, required=False):
         if required and ability is None:
@@ -37,6 +38,10 @@ class Mould(BasicDocument):
                     msgs.update(msg)
 
         return len(msgs) > 0, msgs
+
+    @property
+    def can_delete(self):
+        return self.mould_type != 1
 
     @property
     def has_children(self):

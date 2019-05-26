@@ -11,6 +11,7 @@ from api.utils.custom.schema import (
     instance_schema, instances_schema, base_query_schema, instance_node_schema, instance_nodes_schema, mould_base_schema,
     instance_detail_schema, instances_detail_schema, bridges_instances_query_schema, mould_instances_stats_schema,
 )
+from utils.transfer_hosts import transfer_hosts_manager
 
 
 class InstancesResource(BaseResource):
@@ -172,3 +173,13 @@ class InstanceChildrenResource(BaseResource):
     def get(self, instance_id):
         instance = self.record
         return instances_schema.dump(instance.children).data
+
+
+class RefreshMouldInstancesByInstanceChildrenResource(BaseResource):
+    @roles_accepted('admin')
+    @BaseResource.check_record(Mould, 'mould_id', '模型')
+    @BaseResource.check_record(Instance, 'instance_id', '实例')
+    def put(self, instance_id, mould_id):
+        instance = self.record
+        transfer_hosts_manager(instance, mould_id)
+        return {}
