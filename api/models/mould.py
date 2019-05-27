@@ -39,6 +39,15 @@ class Mould(BasicDocument):
 
         return len(msgs) > 0, msgs
 
+    def get_attributes_mapping(self):
+        mapping = []
+        for attributes in self.matrix:
+            for attr in attributes:
+                mapping.append({
+                    attr.get('attribute_code'): attr.get('attribute_name')
+                })
+        return mapping
+
     @property
     def can_delete(self):
         return self.mould_type != 1

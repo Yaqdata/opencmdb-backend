@@ -7,16 +7,13 @@ from api.utils.custom.files import dump_data
 from api.models import (Instance, Mould)
 
 
-class UploadResource(BaseResource):
-    def post(self):
-        pass
-
-
-class DownloadResource(BaseResource):
+class ExportResource(BaseResource):
     @use_args(download_schema)
     def post(self, args):
         mould_id = args.get('mould_id')
         mould = Mould.find_by_pk(mould_id)
         instances = Instance.fetch_all(mould=mould)
-        directory, filename = dump_data([i.abilities for i in instances], args.get('filename'))
+        filename = args.get('filename', '{}.xlsx')
+        headers = mould.get_attributes_mapping()
+        directory, filename = dump_data([i.abilities for i in instances], filename, headers)
         return send_from_directory(directory, filename, as_attachment=True)

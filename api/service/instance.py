@@ -175,7 +175,7 @@ class InstanceChildrenResource(BaseResource):
         return instances_schema.dump(instance.children).data
 
 
-class RefreshMouldInstancesByInstanceChildrenResource(BaseResource):
+class CrawlInstances(BaseResource):
     @roles_accepted('admin')
     @BaseResource.check_record(Mould, 'mould_id', '模型')
     @BaseResource.check_record(Instance, 'instance_id', '实例')

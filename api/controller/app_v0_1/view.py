@@ -11,8 +11,10 @@ from api.service.mould import (
 from api.service.instance import (
     InstancesResource, InstanceResource, InstanceTreeResource, InstanceParentResource,
     InstanceChildrenResource, BridgesInstancesResource, MouldInstanceStatsResource,
+    CrawlInstances,
 )
 from api.service.operation_log import OperationLogsResource
+from api.service.files import ExportResource
 
 api_bp_v1 = Blueprint('bp_v0.1', __name__)
 api_v1 = Api(api_bp_v1, '/api/v0.1')
@@ -35,6 +37,8 @@ api_v1.add_resource(InstanceChildrenResource, '/instances/<instance_id>/children
 api_v1.add_resource(BridgesInstancesResource, '/bridges/instances')
 api_v1.add_resource(MouldInstanceStatsResource, '/mould/instances/stats')
 api_v1.add_resource(OperationLogsResource, '/operation/logs')
+api_v1.add_resource(CrawlInstances, '/crawl/instances')
+api_v1.add_resource(ExportResource, '/export')
 
 BLUEPRINTS = [api_bp_v1]
 
